@@ -13,7 +13,7 @@ func (config *Config) NewConnection() (*gorm.DB, error) {
 		config.Host, config.Port, config.User, config.Password, config.DBName, config.SSLMode,
 	)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
