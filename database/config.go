@@ -1,4 +1,4 @@
-package storage
+package database
 
 type Config struct {
 	Host     string
