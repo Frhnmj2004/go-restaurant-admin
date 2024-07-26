@@ -13,6 +13,7 @@ type Repository struct {
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{DB: db}
 }
+
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	groceryCtrl := controllers.NewGroceryController(r.DB)
 	foodItemCtrl := controllers.NewFoodItemController(r.DB)
@@ -21,8 +22,8 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	groceryGroup := app.Group("/api/groceries")
 	groceryGroup.Post("/", groceryCtrl.CreateGrocery)
 	groceryGroup.Get("/", groceryCtrl.GetAllGroceries)
-	groceryGroup.Get("/:id", groceryCtrl.GetGroceryByID)
-	groceryGroup.Put("/:id", groceryCtrl.UpdateGrocery)
+	groceryGroup.Get("/:name", groceryCtrl.GetGroceryByName)
+	groceryGroup.Put("/:name", groceryCtrl.UpdateGrocery)
 
 	foodItemGroup := app.Group("/api/fooditems")
 	foodItemGroup.Post("/", foodItemCtrl.CreateFoodItem)
