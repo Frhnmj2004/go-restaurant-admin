@@ -8,6 +8,7 @@ import (
 
 	"github.com/Frhnmj2004/restaurant-admin/helper"
 	"github.com/Frhnmj2004/restaurant-admin/models"
+	"github.com/Frhnmj2004/restaurant-admin/types"
 )
 
 type GroceryController struct {
@@ -61,6 +62,7 @@ func (ctrl *GroceryController) GetGroceryByName(ctx *fiber.Ctx) error {
 	}
 
 	groceryModel := &models.Grocery{}
+
 	err := ctrl.DB.Where("name =?", name).First(groceryModel).Error
 	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusNotFound, "Grocery not found")
@@ -80,16 +82,14 @@ func (ctrl *GroceryController) UpdateGrocery(ctx *fiber.Ctx) error {
 	}
 
 	grocery := &models.Grocery{}
+
 	err := ctrl.DB.Where("name =?", name).First(grocery).Error
 	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusNotFound, "Grocery not found")
 	}
 
-	type UpdateGroceryRequest struct {
-		Quantity float64 `json:"quantity"`
-	}
+	request := &types.UpdateGroceryRequest{}
 
-	request := &UpdateGroceryRequest{}
 	err = ctx.BodyParser(request)
 	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request body")

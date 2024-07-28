@@ -5,6 +5,7 @@ import (
 
 	"github.com/Frhnmj2004/restaurant-admin/helper"
 	"github.com/Frhnmj2004/restaurant-admin/models"
+	"github.com/Frhnmj2004/restaurant-admin/types"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -18,24 +19,15 @@ func NewFoodItemController(db *gorm.DB) *FoodItemController {
 }
 
 func (ctrl *FoodItemController) CreateFoodItem(ctx *fiber.Ctx) error {
-	type IngredientRequest struct {
-		GroceryName string  `json:"groceryname"`
-		Quantity    float64 `json:"quantity"`
-	}
+	request := &types.CreateFoodItemRequest{}
 
-	type CreateFoodItemRequest struct {
-		Name        string              `json:"name"`
-		Price       float64             `json:"price"`
-		Ingredients []IngredientRequest `json:"ingredients"`
-	}
-
-	request := &CreateFoodItemRequest{}
 	err := ctx.BodyParser(request)
 	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request body")
 	}
 
 	ingredients := make([]models.Ingredient, len(request.Ingredients))
+
 	grocery := &models.Grocery{}
 
 	for _, ing := range request.Ingredients {
@@ -77,10 +69,12 @@ func (ctrl *FoodItemController) GetFoodItemByName(ctx *fiber.Ctx) error {
 	}
 
 	foodItemModel := &models.FoodItem{}
-	error := ctrl.DB.Where("name =?", name).First(foodItemModel).Error
-	if error != nil {
+
+	err := ctrl.DB.Where("name =?", name).First(foodItemModel).Error
+	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusNotFound, "Food item not found")
 	}
+
 	ctx.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "Food item retrieved successfully",
 		"data":    foodItemModel,

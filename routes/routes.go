@@ -28,7 +28,7 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	foodItemGroup := app.Group("/api/fooditems")
 	foodItemGroup.Post("/", foodItemCtrl.CreateFoodItem)
 	foodItemGroup.Get("/", foodItemCtrl.GetAllFoodItems)
-	foodItemGroup.Get("/:id", foodItemCtrl.GetFoodItemByID)
+	foodItemGroup.Get("/:name", foodItemCtrl.GetFoodItemByName)
 
 	orderGroup := app.Group("/api/orders")
 	orderGroup.Post("/", orderCtrl.PlaceOrder)
