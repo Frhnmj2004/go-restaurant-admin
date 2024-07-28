@@ -71,11 +71,34 @@ func (ctrl *FoodItemController) CreateFoodItem(ctx *fiber.Ctx) error {
 }
 
 func (ctrl *FoodItemController) GetFoodItemByName(ctx *fiber.Ctx) error {
+	name := ctx.Params("name")
+	if name == "" {
+		return helper.ErrorResponse(ctx, http.StatusBadRequest, "Missing food item name")
+	}
 
+	foodItemModel := &models.FoodItem{}
+	error := ctrl.DB.Where("name =?", name).First(foodItemModel).Error
+	if error != nil {
+		return helper.ErrorResponse(ctx, http.StatusNotFound, "Food item not found")
+	}
+	ctx.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "Food item retrieved successfully",
+		"data":    foodItemModel,
+	})
 	return nil
 }
 
 func (ctrl *FoodItemController) GetAllFoodItems(ctx *fiber.Ctx) error {
+	allFoodItems := &[]models.FoodItem{}
 
+	err := ctrl.DB.Find(allFoodItems).Error
+	if err != nil {
+		return helper.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to get all food items")
+	}
+
+	ctx.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "All food items retrieved successfully",
+		"data":    allFoodItems,
+	})
 	return nil
 }
