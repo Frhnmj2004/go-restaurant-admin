@@ -18,6 +18,7 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	groceryCtrl := controllers.NewGroceryController(r.DB)
 	foodItemCtrl := controllers.NewFoodItemController(r.DB)
 	orderCtrl := controllers.NewOrderController(r.DB)
+	revenueCtrl := controllers.NewRevenueController(r.DB)
 
 	groceryGroup := app.Group("/api/groceries")
 	groceryGroup.Post("/", groceryCtrl.CreateGrocery)
@@ -29,9 +30,14 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	foodItemGroup.Post("/", foodItemCtrl.CreateFoodItem)
 	foodItemGroup.Get("/", foodItemCtrl.GetAllFoodItems)
 	foodItemGroup.Get("/:name", foodItemCtrl.GetFoodItemByName)
+	foodItemGroup.Delete("/", foodItemCtrl.DeleteAllFoodItems)
 
 	orderGroup := app.Group("/api/orders")
 	orderGroup.Post("/", orderCtrl.PlaceOrder)
 	orderGroup.Get("/", orderCtrl.GetAllOrders)
 	orderGroup.Get("/:id", orderCtrl.GetOrderByID)
+
+	revenueGroup := app.Group("/api/revenue")
+	revenueGroup.Get("/", revenueCtrl.GetRevenue)
+
 }

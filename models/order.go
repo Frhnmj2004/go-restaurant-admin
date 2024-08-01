@@ -4,7 +4,8 @@ import "github.com/jinzhu/gorm"
 
 type Order struct {
 	gorm.Model
-	FoodItemID uint    `json:"fooditemid"`
-	Quantity   uint    `json:"quantity"`
-	TotalPrice float64 `json:"totalprice"`
+	FoodItemID uint     `json:"fooditemid"`
+	Quantity   uint     `json:"quantity"`
+	TotalPrice float64  `json:"totalprice"`
+	FoodItem   FoodItem `gorm:"foreignkey:FoodItemID"`
 }

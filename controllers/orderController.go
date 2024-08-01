@@ -64,12 +64,18 @@ func (ctrl *OrderController) PlaceOrder(ctx *fiber.Ctx) error {
 		return helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid request body")
 	}
 
+	// debug
+	//fmt.Printf("Placing order: %+v\n", request)
+
 	foodItem := &models.FoodItem{}
 
-	err = ctrl.DB.Where("name =?", request.FoodItemName).First(foodItem).Error
+	err = ctrl.DB.Preload("Ingredients.Grocery").Where("name =?", request.FoodItemName).First(foodItem).Error
 	if err != nil {
 		return helper.ErrorResponse(ctx, http.StatusNotFound, "Food item not found")
 	}
+
+	// debug
+	//fmt.Printf("Food item found: %+v\n", foodItem)
 
 	tx := ctrl.DB.Begin()
 
@@ -84,20 +90,26 @@ func (ctrl *OrderController) PlaceOrder(ctx *fiber.Ctx) error {
 		return helper.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to update revenue")
 	}
 
+	// debug
+	//fmt.Printf("lenght: %d\n", len(foodItem.Ingredients))
+
 	for _, ingredient := range foodItem.Ingredients {
 		grocery := &models.Grocery{}
 
-		err := tx.Where("name =?", ingredient.GroceryName).First(grocery).Error
+		// debug
+		//fmt.Printf("Grocery: %+v\n", ingredient)
+
+		err := tx.Where("name =?", ingredient.Grocery.Name).First(grocery).Error
 		if err != nil {
 			tx.Rollback()
-			return helper.ErrorResponse(ctx, http.StatusNotFound, "Grocery not found :"+ingredient.GroceryName)
+			return helper.ErrorResponse(ctx, http.StatusNotFound, "Grocery not found :"+ingredient.Grocery.Name)
 		}
 
 		requiredQuantity := ingredient.Quantity * float64(request.Quantity)
 
 		if grocery.Quantity < requiredQuantity {
 			tx.Rollback()
-			return helper.ErrorResponse(ctx, http.StatusUnprocessableEntity, "Not enough quantity of "+ingredient.GroceryName+" for this order")
+			return helper.ErrorResponse(ctx, http.StatusUnprocessableEntity, "Not enough quantity of "+ingredient.Grocery.Name+" for this order")
 		}
 
 		grocery.Quantity -= requiredQuantity
