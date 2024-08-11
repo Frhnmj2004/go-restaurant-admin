@@ -1,5 +1,9 @@
 package types
 
+import (
+	jwt "github.com/dgrijalva/jwt-go"
+)
+
 type IngredientRequest struct {
 	GroceryName string  `json:"groceryname"`
 	Quantity    float64 `json:"quantity"`
@@ -18,4 +22,13 @@ type PlaceOrderRequest struct {
 
 type UpdateGroceryRequest struct {
 	Quantity float64 `json:"quantity"`
+}
+
+type SignedDetails struct {
+	Email     string
+	FirstName string
+	LastName  string
+	UserID    string
+	UserType  string
+	jwt.StandardClaims
 }
