@@ -2,7 +2,7 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-type Table struct {
+type User struct {
 	gorm.Model
 	FirstName    *string `json:"firstname" validate:"required,min=3,max=50"`
 	LastName     *string `json:"lastname" validate:"required,min=3,max=50"`
