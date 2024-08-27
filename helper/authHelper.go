@@ -1,10 +1,13 @@
 package helper
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
+	"log"
+
 	"github.com/Frhnmj2004/restaurant-admin/models"
-) 
+	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
 
 func CheckUserType(ctx *fiber.Ctx, role string) (err error) {
 	return nil
@@ -19,7 +22,11 @@ func VerifyPassword(userpassword string, providedPassword string) (bool, string)
 }
 
 func HashPassword(password string) string {
-	return ""
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		log.Panic(err)
+	}
+	return string(bytes)
 }
 
 func UserExists(DB *gorm.DB, email string, phone string) (bool, error) {
