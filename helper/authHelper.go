@@ -18,7 +18,15 @@ func MatchUserTypetoUserID(ctx *fiber.Ctx, userID string) (err error) {
 }
 
 func VerifyPassword(userpassword string, providedPassword string) (bool, string) {
-	return true, ""
+	err := bcrypt.CompareHashAndPassword([]byte(providedPassword), []byte(userpassword))
+	check := true
+	msg := ""
+
+	if err != nil {
+		msg = "email or password is incorrect"
+		check = false
+	}
+	return check, msg
 }
 
 func HashPassword(password string) string {

@@ -37,7 +37,3 @@ func GenerateAllTokens(details *types.SignedDetails) (signedTokens string, signe
 func ValidateToken(signedToken string) (claims *types.SignedDetails, msg string) {
 	return nil, ""
 }
-
-func UpdateAllTokens(signedToken string) (string, error) {
-	return "", nil
-}
