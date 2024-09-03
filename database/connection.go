@@ -30,6 +30,7 @@ func MigrateDB(db *gorm.DB) error {
 		&models.Ingredient{},
 		&models.Order{},
 		&models.Revenue{},
+		&models.User{},
 	)
 
 	if err != nil {
